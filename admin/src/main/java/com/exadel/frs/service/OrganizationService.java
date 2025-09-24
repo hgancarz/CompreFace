@@ -64,6 +64,10 @@ public class OrganizationService {
             return OrganizationRole.values();
         }
 
+        if (role.getRole() == OrganizationRole.ADMINISTRATOR) {
+            return new OrganizationRole[]{OrganizationRole.ADMINISTRATOR, USER};
+        }
+
         return new OrganizationRole[0];
     }
 
