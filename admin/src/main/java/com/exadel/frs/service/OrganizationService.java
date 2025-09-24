@@ -17,6 +17,7 @@
 package com.exadel.frs.service;
 
 import static com.exadel.frs.enums.OrganizationRole.OWNER;
+import static com.exadel.frs.enums.OrganizationRole.ADMINISTRATOR;
 import static com.exadel.frs.enums.OrganizationRole.USER;
 import com.exadel.frs.dto.ui.UserDeleteDto;
 import com.exadel.frs.dto.ui.UserRoleUpdateDto;
