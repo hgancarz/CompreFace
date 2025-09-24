@@ -61,7 +61,7 @@ public class OrganizationService {
         val organization = getOrganization(guid);
         val role = organization.getUserOrganizationRoleOrThrow(userId);
         if (role.getRole() == OWNER) {
-            return OrganizationRole.values();
+            return new OrganizationRole[]{OrganizationRole.ADMINISTRATOR, OrganizationRole.USER};
         }
 
         return new OrganizationRole[0];
