@@ -71,7 +71,7 @@ public class StatisticService {
     private List<StatisticsFacesEntity> createStatistics(String installInfoGuid, List<ModelSubjectProjection> subjectCountPerModel) {
         return subjectCountPerModel.stream()
                                    .map(subjectCount -> createStatistic(installInfoGuid, subjectCount))
-                                   .toList();
+                                   .collect(java.util.stream.Collectors.toList());
     }
 
     private StatisticsFacesEntity createStatistic(String installInfoGuid, ModelSubjectProjection subjectCount) {

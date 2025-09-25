@@ -40,9 +40,11 @@ public class CustomTokenEndpoint extends TokenEndpoint {
             @RequestParam Map<String, String> parameters
     ) throws HttpRequestMethodNotSupportedException {
 
-        if (principal instanceof UsernamePasswordAuthenticationToken authenticationToken
-                && authenticationToken.getPrincipal() instanceof User) {
-            return ResponseEntity.status(HttpStatus.OK).build();
+        if (principal instanceof UsernamePasswordAuthenticationToken) {
+            UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
+            if (authenticationToken.getPrincipal() instanceof User) {
+                return ResponseEntity.status(HttpStatus.OK).build();
+            }
         }
 
         if (isRefreshTokenGrantType(parameters)) {

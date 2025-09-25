@@ -101,7 +101,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
                                                              .setAccessTokenValidity(it.getAccessTokenValidity())
                                                              .setRefreshTokenValidity(it.getRefreshTokenValidity())
                                                              .setAutoApprove("*"))
-                                             .toList();
+                                             .collect(java.util.stream.Collectors.toList());
         clientService.saveAll(appClients);
     }
 
@@ -115,7 +115,8 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
                 .pathMapping("/oauth/token", ADMIN + "/oauth/token");
 
         endpoints.exceptionTranslator(exception -> {
-            if (exception instanceof OAuth2Exception oAuth2Exception) {
+            if (exception instanceof OAuth2Exception) {
+                OAuth2Exception oAuth2Exception = (OAuth2Exception) exception;
                 return ResponseEntity
                         .status(oAuth2Exception.getHttpErrorCode())
                         .body(new CustomOAuth2Exception(oAuth2Exception.getMessage()));

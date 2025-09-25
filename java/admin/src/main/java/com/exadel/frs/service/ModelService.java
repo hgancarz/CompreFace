@@ -231,19 +231,17 @@ public class ModelService {
                 }
         );
 
-        String sql = """
-                select
-                    e.id as embedding_id,
-                    i.id as img_id
-                from
-                    embedding e
-                left join
-                    img i on e.img_id = i.id
-                inner join
-                    subject s on s.id = e.subject_id
-                where
-                    s.id = ?
-                """;
+        String sql = "select\n" +
+                "    e.id as embedding_id,\n" +
+                "    i.id as img_id\n" +
+                "from\n" +
+                "    embedding e\n" +
+                "left join\n" +
+                "    img i on e.img_id = i.id\n" +
+                "inner join\n" +
+                "    subject s on s.id = e.subject_id\n" +
+                "where\n" +
+                "    s.id = ?";
 
         jdbcTemplate.query(
                 sql,

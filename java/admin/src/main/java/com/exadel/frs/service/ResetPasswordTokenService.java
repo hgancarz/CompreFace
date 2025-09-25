@@ -94,12 +94,10 @@ public class ResetPasswordTokenService {
                 "token", token.toString()
         );
 
-        val message = StringSubstitutor.replace("""
-                In order to reset a password click the link below:<br>
-                <a href="${host}/reset-password?token=${token}">
-                    ${host}/reset-password?token=${token}
-                </a>
-                """, messageParams, "${", "}");
+        val message = StringSubstitutor.replace("In order to reset a password click the link below:<br>\n" +
+                "<a href=\"${host}/reset-password?token=${token}\">\n" +
+                "    ${host}/reset-password?token=${token}\n" +
+                "</a>", messageParams, "${", "}");
 
         emailSender.sendMail(
                 email,

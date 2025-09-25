@@ -132,12 +132,10 @@ public class UserService {
                 "token", user.getRegistrationToken()
         );
 
-        val message = StringSubstitutor.replace("""
-                Please, confirm your registration clicking the link below:<br>
-                <a href="${host}/admin/user/registration/confirm?token=${token}">
-                    ${host}/admin/user/registration/confirm?token=${token}
-                </a>
-                """, messageParams, "${", "}");
+        val message = StringSubstitutor.replace("Please, confirm your registration clicking the link below:<br>\n" +
+                "<a href=\"${host}/admin/user/registration/confirm?token=${token}\">\n" +
+                "    ${host}/admin/user/registration/confirm?token=${token}\n" +
+                "</a>", messageParams, "${", "}");
 
         emailSender.sendMail(
                 user.getEmail(),

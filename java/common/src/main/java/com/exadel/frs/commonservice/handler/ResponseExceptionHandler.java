@@ -55,8 +55,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BasicException.class)
     public ResponseEntity<ExceptionResponseDto> handleDefinedExceptions(final BasicException ex) {
         switch (ex.getLogLevel()) {
-            case ERROR -> log.error("Defined exception occurred", ex);
-            case DEBUG -> log.debug("Defined exception occurred", ex);
+            case ERROR:
+                log.error("Defined exception occurred", ex);
+                break;
+            case DEBUG:
+                log.debug("Defined exception occurred", ex);
+                break;
+            default:
+                break;
         }
 
         return ResponseEntity
@@ -185,12 +191,23 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             return new BasicException(UNDEFINED, "");
         }
 
-        basicException = switch (code) {
-            case "NotBlank", "ValidEnum", "Size" -> new ConstraintViolationException(fieldError.getDefaultMessage());
-            case "NotNull", "NotEmpty" -> new EmptyRequiredFieldException(fieldError.getField());
-            case "Pattern" -> new PatternMatchException(fieldError.getDefaultMessage());
-            default -> new BasicException(UNDEFINED, "");
-        };
+        switch (code) {
+            case "NotBlank":
+            case "ValidEnum":
+            case "Size":
+                basicException = new ConstraintViolationException(fieldError.getDefaultMessage());
+                break;
+            case "NotNull":
+            case "NotEmpty":
+                basicException = new EmptyRequiredFieldException(fieldError.getField());
+                break;
+            case "Pattern":
+                basicException = new PatternMatchException(fieldError.getDefaultMessage());
+                break;
+            default:
+                basicException = new BasicException(UNDEFINED, "");
+                break;
+        }
 
         return basicException;
     }
