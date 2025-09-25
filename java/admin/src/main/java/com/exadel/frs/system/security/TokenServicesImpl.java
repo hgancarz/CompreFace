@@ -46,7 +46,8 @@ public class TokenServicesImpl extends DefaultTokenServices {
         Collection<OAuth2AccessToken> oAuth2AccessTokens = tokenStore.findTokensByClientIdAndUserName(authentication
                 .getOAuth2Request().getClientId(), authentication.getName());
         oAuth2AccessTokens.forEach(accessToken -> {
-            if (accessToken.getRefreshToken() instanceof ExpiringOAuth2RefreshToken expiring) {
+            if (accessToken.getRefreshToken() instanceof ExpiringOAuth2RefreshToken) {
+                ExpiringOAuth2RefreshToken expiring = (ExpiringOAuth2RefreshToken) accessToken.getRefreshToken();
                 if (System.currentTimeMillis() > expiring.getExpiration().getTime()) {
                     tokenStore.removeAccessToken(accessToken);
                     tokenStore.removeRefreshToken(accessToken.getRefreshToken());
