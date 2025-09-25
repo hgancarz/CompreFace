@@ -37,9 +37,13 @@ public class ResponseExceptionHandler {
     }
 
     private ExceptionResponseDto buildBody(final Exception ex) {
+        String message = ex.getMessage();
+        if (message == null || message.trim().isEmpty()) {
+            message = "Something went wrong, please try again";
+        }
         return ExceptionResponseDto.builder()
                                    .code(UNDEFINED.getCode())
-                                   .message(ex.getMessage())
+                                   .message(message)
                                    .build();
     }
 }
