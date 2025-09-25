@@ -1,28 +1,21 @@
 package com.exadel.frs.commonservice.projection;
 
-import com.exadel.frs.commonservice.entity.Embedding;
 import java.util.UUID;
 
-public record EmbeddingProjection(UUID embeddingId, String subjectName) {
+public class EmbeddingProjection {
+    private final UUID id;
+    private final String subjectName;
 
-    public static EmbeddingProjection from(Embedding embedding) {
-        return new EmbeddingProjection(
-                embedding.getId(),
-                embedding.getSubject().getSubjectName()
-        );
+    public EmbeddingProjection(UUID id, String subjectName) {
+        this.id = id;
+        this.subjectName = subjectName;
     }
 
-    public static EmbeddingProjection from(EnhancedEmbeddingProjection projection) {
-        return new EmbeddingProjection(
-                projection.embeddingId(),
-                projection.subjectName()
-        );
+    public UUID id() {
+        return id;
     }
 
-    public EmbeddingProjection withNewSubjectName(String newSubjectName) {
-        return new EmbeddingProjection(
-                this.embeddingId(),
-                newSubjectName
-        );
+    public String subjectName() {
+        return subjectName;
     }
 }

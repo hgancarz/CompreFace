@@ -1,36 +1,22 @@
 package com.exadel.frs.commonservice.repository;
 
 import com.exadel.frs.commonservice.entity.ModelStatistic;
-import com.exadel.frs.commonservice.projection.ModelStatisticProjection;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
 
 @Repository
 public interface ModelStatisticRepository extends JpaRepository<ModelStatistic, Long> {
 
-    Stream<ModelStatistic> findAllByModelIdInAndCreatedDate(Set<Long> modelIds, LocalDateTime createdDate);
+    @Modifying
+    @Query("delete from ModelStatistic ms where ms.createdDate < :date")
+    void deleteByCreatedDateBefore(@Param("date") Date date);
 
-    @Query("""
-            select
-                new com.exadel.frs.commonservice.projection.ModelStatisticProjection(sum(statistic.requestCount), cast(statistic.createdDate as date))
-            from
-                ModelStatistic as statistic
-            join
-                statistic.model as model
-            where
-                model.guid = :modelGuid
-            and
-                cast(statistic.createdDate as date) between :startDate and :endDate
-            group by
-                cast(statistic.createdDate as date)
-            order by
-                cast(statistic.createdDate as date) desc
-            """)
-    List<ModelStatisticProjection> findAllSummarizedByDay(String modelGuid, Date startDate, Date endDate);
+    @Modifying
+    @Query("update ModelStatistic ms set ms.requestCount = ms.requestCount + 1 where ms.model.apiKey = :apiKey and ms.createdDate = :date")
+    void incrementRequestCount(@Param("apiKey") String apiKey, @Param("date") Date date);
 }
