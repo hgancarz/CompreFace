@@ -32,7 +32,7 @@ public class ResponseExceptionHandler {
     private ExceptionResponseDto buildBody(final BasicException ex) {
         return ExceptionResponseDto.builder()
                                    .code(ex.getExceptionCode().getCode())
-                                   .message(ex.getMessage())
+                                   .message(ex.getMessage() != null ? ex.getMessage() : "Something went wrong, please try again")
                                    .build();
     }
 
