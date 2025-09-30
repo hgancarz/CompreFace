@@ -1,6 +1,8 @@
 package com.exadel.frs.commonservice.repository;
 
 import com.exadel.frs.commonservice.entity.Subject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,8 +17,14 @@ public interface SubjectRepository extends PagingAndSortingRepository<Subject, U
 
     List<Subject> findByApiKey(String apiKey);
 
+    @Query("select s from Subject s where s.apiKey = :apiKey")
+    Page<Subject> findAllByApiKey(@Param("apiKey") String apiKey, Pageable pageable);
+
     @Query("select s.subjectName from Subject s where s.apiKey = :apiKey")
     Collection<String> getSubjectNames(String apiKey);
+
+    @Query("select s.subjectName from Subject s where s.apiKey = :apiKey and lower(s.subjectName) like lower(concat(:search, '%'))")
+    Page<String> getSubjectNames(@Param("apiKey") String apiKey, @Param("search") String search, Pageable pageable);
 
     Optional<Subject> findByApiKeyAndSubjectNameIgnoreCase(String apiKey, String subjectName);
 
@@ -25,4 +33,7 @@ public interface SubjectRepository extends PagingAndSortingRepository<Subject, U
     int deleteByApiKey(@Param("apiKey") String apiKey);
 
     Long countAllByApiKey(String apiKey);
+
+    @Query("select count(s) from Subject s where s.apiKey = :apiKey and lower(s.subjectName) like lower(concat(:search, '%'))")
+    Long countByApiKeyAndSubjectNameStartingWithIgnoreCase(@Param("apiKey") String apiKey, @Param("search") String search);
 }

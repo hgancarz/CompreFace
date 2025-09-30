@@ -13,6 +13,10 @@ import com.exadel.frs.commonservice.system.global.ImageProperties;
 import com.exadel.frs.core.trainservice.dto.EmbeddingInfo;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
@@ -30,6 +34,24 @@ public class SubjectDao {
 
     public Collection<String> getSubjectNames(final String apiKey) {
         return subjectRepository.getSubjectNames(apiKey);
+    }
+
+    public Page<String> getSubjectNames(final String apiKey, final String search, final Pageable pageable) {
+        if (search != null && !search.trim().isEmpty()) {
+            return subjectRepository.getSubjectNames(apiKey, search.trim(), pageable);
+        } else {
+            // For no search, we need to implement paged query for all subjects
+            return subjectRepository.findAllByApiKey(apiKey, pageable)
+                    .map(Subject::getSubjectName);
+        }
+    }
+
+    public long countSubjects(final String apiKey, final String search) {
+        if (search != null && !search.trim().isEmpty()) {
+            return subjectRepository.countByApiKeyAndSubjectNameStartingWithIgnoreCase(apiKey, search.trim());
+        } else {
+            return subjectRepository.countAllByApiKey(apiKey);
+        }
     }
 
     @Transactional

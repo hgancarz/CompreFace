@@ -36,6 +36,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,6 +60,14 @@ public class SubjectService {
 
     public Collection<String> getSubjectsNames(final String apiKey) {
         return subjectDao.getSubjectNames(apiKey);
+    }
+
+    public Page<String> getSubjectsNames(final String apiKey, final String search, final Pageable pageable) {
+        return subjectDao.getSubjectNames(apiKey, search, pageable);
+    }
+
+    public long countSubjects(final String apiKey, final String search) {
+        return subjectDao.countSubjects(apiKey, search);
     }
 
     public Subject createSubject(final String apiKey, final String subjectName) {
@@ -120,86 +132,43 @@ public class SubjectService {
 
         return embedding;
     }
-    public List<Embedding> removeSubjectEmbeddings(final String apiKey, final List<UUID> embeddingIds){
-        List<Embedding> result = new ArrayList<>();
-        for (UUID id: embeddingIds) {
-            try {
-                result.add(removeSubjectEmbedding(apiKey, id));
-            } catch (EmbeddingNotFoundException e){
-                e.printStackTrace();
-            }
-        }
-        return result;
+    public List<Embedding> removeSubjectEmbeddings(final String apiKey, final List<UUID> embeddingIds) {
+        var embeddings = embeddingIds.stream()
+                .map(id -> removeSubjectEmbedding(apiKey, id))
+                .toList();
+
+        return embeddings;
     }
 
     public boolean updateSubjectName(final String apiKey, final String oldSubjectName, final String newSubjectName) {
-        if (StringUtils.isEmpty(newSubjectName) || newSubjectName.equals(oldSubjectName)) {
-            // no need to update with empty or similar name
-            return false;
-        }
+        var updated = subjectDao.updateSubjectName(apiKey, oldSubjectName, newSubjectName);
 
-        boolean updated = subjectDao.updateSubjectName(apiKey, oldSubjectName, newSubjectName);
-
-        if (updated) {
-            // update cache if required
-            embeddingCacheProvider.ifPresent(
-                    apiKey,
-                    c -> c.updateSubjectName(oldSubjectName, newSubjectName)
-            );
-        }
+        // update cache if required
+        embeddingCacheProvider.ifPresent(
+                apiKey,
+                c -> c.updateSubjectName(oldSubjectName, newSubjectName)
+        );
 
         return updated;
     }
 
-    public Pair<Subject, Embedding> saveCalculatedEmbedding(
-            final String base64photo,
-            final String subjectName,
-            final Double detProbThreshold,
-            final String modelKey) {
-        var findFacesResponse = facesApiClient.findFacesBase64WithCalculator(
-                base64photo,
-                MAX_FACES_TO_RECOGNIZE,
-                detProbThreshold,
+    public Pair<Subject, Embedding> addEmbedding(final String apiKey,
+                                                 final String subjectName,
+                                                 final byte[] content) throws IOException {
+        FindFacesResponse findFacesResponse = facesApiClient.findFacesBase64WithCalculator(
+                Base64.getEncoder().encodeToString(content),
+                1,
+                0.0,
                 null,
                 true
         );
 
-        return saveCalculatedEmbedding(
-                Base64.getDecoder().decode(base64photo),
-                subjectName,
-                modelKey,
-                findFacesResponse
-        );
-    }
+        if (findFacesResponse == null || findFacesResponse.getResult().isEmpty()) {
+            // no faces found
+            return Pair.of(subjectDao.createSubject(apiKey, subjectName), null);
+        }
 
-    public Pair<Subject, Embedding> saveCalculatedEmbedding(
-            final MultipartFile file,
-            final String subjectName,
-            final Double detProbThreshold,
-            final String modelKey
-    ) throws IOException {
-        var findFacesResponse = facesApiClient.findFacesWithCalculator(
-                file,
-                MAX_FACES_TO_RECOGNIZE,
-                detProbThreshold,
-                null,
-                true
-        );
-
-        return saveCalculatedEmbedding(
-                file.getBytes(),
-                subjectName,
-                modelKey,
-                findFacesResponse
-        );
-    }
-
-    private Pair<Subject, Embedding> saveCalculatedEmbedding(byte[] content,
-                                                             String subjectName,
-                                                             String modelKey,
-                                                             FindFacesResponse findFacesResponse) {
-
-        // if we are here => at least one face exists
+        // we are here => at least one face exists
         List<FindFacesResult> result = findFacesResponse.getResult();
 
         if (result.size() > MAX_FACES_TO_SAVE) {
@@ -215,10 +184,10 @@ public class SubjectService {
                 content
         );
 
-        final Pair<Subject, Embedding> pair = subjectDao.addEmbedding(modelKey, subjectName, embeddingToSave);
+        final Pair<Subject, Embedding> pair = subjectDao.addEmbedding(apiKey, subjectName, embeddingToSave);
 
         embeddingCacheProvider.ifPresent(
-                modelKey,
+                apiKey,
                 subjectCollection -> subjectCollection.addEmbedding(pair.getRight())
         );
 
