@@ -48,15 +48,67 @@ public class SubjectController {
     }
 
     @GetMapping
-    public Map<String, Object> listSubjects(
+    public Object listSubjects(
             @ApiParam(value = API_KEY_DESC, required = true)
             @RequestHeader(X_FRS_API_KEY_HEADER)
-            final String apiKey
+            final String apiKey,
+            @ApiParam(value = "Page number (0-based)", example = "0")
+            @RequestParam(value = "page", required = false) Integer page,
+            @ApiParam(value = "Page size (1-1000)", example = "50")
+            @RequestParam(value = "size", required = false) Integer size,
+            @ApiParam(value = "Search filter (case-insensitive prefix match)", example = "ali")
+            @RequestParam(value = "search", required = false) String search,
+            @ApiParam(value = "Sort field", allowableValues = "name", example = "name")
+            @RequestParam(value = "sort", required = false, defaultValue = "name") String sort,
+            @ApiParam(value = "Sort order", allowableValues = "asc,desc", example = "asc")
+            @RequestParam(value = "order", required = false, defaultValue = "asc") String order
     ) {
-        return Map.of(
-                "subjects",
-                subjectService.getSubjectsNames(apiKey)
+        // Backward compatibility: if none of page/size/search are provided, return legacy array
+        if (page == null && size == null && search == null) {
+            return Map.of("subjects", subjectService.getSubjectsNames(apiKey));
+        }
+
+        // Validate parameters
+        if (page != null && page < 0) {
+            throw new IllegalArgumentException("Page must be >= 0");
+        }
+        if (size != null && (size < 1 || size > 1000)) {
+            throw new IllegalArgumentException("Size must be between 1 and 1000");
+        }
+        if (!"name".equals(sort)) {
+            throw new IllegalArgumentException("Sort must be 'name'");
+        }
+        if (!"asc".equals(order) && !"desc".equals(order)) {
+            throw new IllegalArgumentException("Order must be 'asc' or 'desc'");
+        }
+
+        // Set default values
+        int pageNumber = page != null ? page : 0;
+        int pageSize = size != null ? size : 50;
+        
+        // Create pageable with sorting
+        org.springframework.data.domain.Sort.Direction direction = "desc".equals(order) 
+                ? org.springframework.data.domain.Sort.Direction.DESC 
+                : org.springframework.data.domain.Sort.Direction.ASC;
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+                pageNumber, 
+                pageSize, 
+                org.springframework.data.domain.Sort.by(direction, "subjectName")
         );
+
+        // Get paged results
+        org.springframework.data.domain.Page<String> subjectPage = subjectService.getSubjectsNames(apiKey, search, pageable);
+
+        // Build response
+        return com.exadel.frs.core.trainservice.dto.SubjectsResponseDto.builder()
+                .items(subjectPage.getContent())
+                .page(subjectPage.getNumber())
+                .size(subjectPage.getSize())
+                .totalElements(subjectPage.getTotalElements())
+                .totalPages(subjectPage.getTotalPages())
+                .sort(sort)
+                .order(order)
+                .build();
     }
 
     @PutMapping("/{subject}")

@@ -58,6 +58,10 @@ public class SubjectService {
         return subjectDao.getSubjectNames(apiKey);
     }
 
+    public org.springframework.data.domain.Page<String> getSubjectsNames(final String apiKey, final String search, final org.springframework.data.domain.Pageable pageable) {
+        return subjectDao.getSubjectNames(apiKey, search, pageable);
+    }
+
     public Subject createSubject(final String apiKey, final String subjectName) {
         // subject is empty (without embeddings) no need to update cache
         return subjectDao.createSubject(apiKey, subjectName);

@@ -32,6 +32,14 @@ public class SubjectDao {
         return subjectRepository.getSubjectNames(apiKey);
     }
 
+    public org.springframework.data.domain.Page<String> getSubjectNames(final String apiKey, final String search, final org.springframework.data.domain.Pageable pageable) {
+        if (search != null && !search.trim().isEmpty()) {
+            return subjectRepository.getSubjectNames(apiKey, search.trim(), pageable);
+        } else {
+            return subjectRepository.getSubjectNames(apiKey, pageable);
+        }
+    }
+
     @Transactional
     public Subject deleteSubjectByName(final String apiKey, final String subjectName) {
         final Optional<Subject> subjectOptional = subjectRepository.findByApiKeyAndSubjectNameIgnoreCase(apiKey, subjectName);
