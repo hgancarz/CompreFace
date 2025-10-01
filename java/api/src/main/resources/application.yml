@@ -91,6 +91,16 @@ app:
       retryer:
         max-attempts: ${MAX_ATTEMPTS:1}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
 ---
 
 spring:
