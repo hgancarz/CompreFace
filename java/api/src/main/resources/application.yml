@@ -108,4 +108,20 @@ spring:
 swagger:
   info:
     title: CompreFace - API
-    version: 0.0.2-SNAPSHOT
+    version: 0.0.2-SNAPSHOT---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include:
+            - db
+            - cache
+            - mlCalculator
