@@ -101,4 +101,14 @@ public class FacesRestApiClient implements FacesApiClient {
             throw new FacesServiceException(e.getMessage());
         }
     }
-}
+
+    
+        @Override
+        public void health() {
+            try {
+                feignClient.health();
+            } catch (FeignException e) {
+                throw new FacesServiceException(e.getMessage());
+            }
+        }
+    }

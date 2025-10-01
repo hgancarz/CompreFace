@@ -57,4 +57,11 @@ public interface FacesFeignClient {
     @RequestLine("GET /status")
     @Headers("Content-Type: multipart/form-data")
     FacesStatusResponse getStatus();
-}
+
+    
+    /**
+     * Lightweight health endpoint to check service availability.
+     */
+    @RequestLine("GET /health")
+    void health();
+    }

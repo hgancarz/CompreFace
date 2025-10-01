@@ -67,4 +67,9 @@ public interface FacesApiClient {
      * @return result of operation
      */
     FacesStatusResponse getStatus();
+
+    /**
+     * Calls /health endpoint of Faces API
+     */
+    void health();
 }
