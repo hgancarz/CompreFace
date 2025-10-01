@@ -10,6 +10,25 @@ spring:
   profiles:
     active: prod
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: db, mlCalculator, cache
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
 ---
 
 spring:
