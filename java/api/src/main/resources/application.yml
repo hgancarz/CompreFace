@@ -109,3 +109,17 @@ swagger:
   info:
     title: CompreFace - API
     version: 0.0.2-SNAPSHOT
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+      group:
+        readiness:
+          include: db,calculator,cache
+  health:
+    defaults:
+      enabled: true
