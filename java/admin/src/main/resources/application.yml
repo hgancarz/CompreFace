@@ -140,3 +140,17 @@ environment:
   servers:
     PYTHON:
       url: ${PYTHON_URL:http://compreface-core:3000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: when_authorized
+      group:
+        readiness:
+          include: db,liquibase,diskSpace,caches,calculator
+        liveness:
+          include: db,liquibase,diskSpace,caches,calculator
