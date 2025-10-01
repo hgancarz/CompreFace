@@ -63,7 +63,12 @@ def endpoints(app):
             status='OK'
         )
     
-    @app.route('/status')
+    
+    @app.route('/health')
+    def health():
+        return jsonify(status='OK')
+
+@app.route('/status')
     def status_get():
         available_plugins = {p.slug: str(p)
                              for p in managers.plugin_manager.plugins}
