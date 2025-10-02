@@ -20,6 +20,7 @@ import static com.exadel.frs.commonservice.system.global.EnvironmentProperties.S
 import static com.zaxxer.hikari.util.ClockSource.toMillis;
 import static feign.Logger.Level.FULL;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import com.exadel.frs.commonservice.sdk.embedding.feign.EmbeddingFeignClient;
 import com.exadel.frs.commonservice.sdk.faces.feign.FacesFeignClient;
 import com.exadel.frs.commonservice.system.global.EnvironmentProperties;
 import feign.Feign;
@@ -46,6 +47,15 @@ public class FeignClientsConfig {
     @Value("${app.feign.faces.retryer.max-attempts}")
     private int facesRetryerMaxAttempts;
 
+    @Value("${app.feign.embedding.connect-timeout}")
+    private int embeddingConnectTimeout;
+
+    @Value("${app.feign.embedding.read-timeout}")
+    private int embeddingReadTimeout;
+
+    @Value("${app.feign.embedding.retryer.max-attempts}")
+    private int embeddingRetryerMaxAttempts;
+
     private final EnvironmentProperties properties;
 
     @Bean
@@ -60,7 +70,23 @@ public class FeignClientsConfig {
     }
 
     @Bean
+    public EmbeddingFeignClient embeddingFeignClient() {
+        return Feign.builder()
+                    .encoder(new JacksonEncoder())
+                    .decoder(new JacksonDecoder())
+                    .logLevel(FULL)
+                    .retryer(embeddingFeignRetryer())
+                    .options(new Request.Options(embeddingConnectTimeout, MILLISECONDS, embeddingReadTimeout, MILLISECONDS, true))
+                    .target(EmbeddingFeignClient.class, properties.getServers().get(PYTHON).getUrl());
+    }
+
+    @Bean
     public Retryer facesFeignRetryer() {
         return new Retryer.Default(100, toMillis(1), facesRetryerMaxAttempts);
+    }
+
+    @Bean
+    public Retryer embeddingFeignRetryer() {
+        return new Retryer.Default(100, toMillis(1), embeddingRetryerMaxAttempts);
     }
 }
