@@ -124,4 +124,25 @@ management:
           include:
             - db
             - cache
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include:
+            - db
             - mlCalculator
+            - cache
