@@ -109,3 +109,8 @@ swagger:
   info:
     title: CompreFace - API
     version: 0.0.2-SNAPSHOT
+app:
+  feign:
+    embedding-calculator:
+      connect-timeout: ${EMBEDDING_CALCULATOR_CONNECT_TIMEOUT:5000}
+      read-timeout: ${EMBEDDING_CALCULATOR_READ_TIMEOUT:10000}
