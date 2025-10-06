@@ -90,6 +90,11 @@ app:
       read-timeout: ${READ_TIMEOUT:60000}
       retryer:
         max-attempts: ${MAX_ATTEMPTS:1}
+    embedding:
+      connect-timeout: ${EMBEDDING_CONNECTION_TIMEOUT:5000}
+      read-timeout: ${EMBEDDING_READ_TIMEOUT:10000}
+      retryer:
+        max-attempts: ${EMBEDDING_MAX_ATTEMPTS:1}
 
 ---
 

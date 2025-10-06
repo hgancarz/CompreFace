@@ -21,6 +21,7 @@ import static com.zaxxer.hikari.util.ClockSource.toMillis;
 import static feign.Logger.Level.FULL;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import com.exadel.frs.commonservice.sdk.faces.feign.FacesFeignClient;
+import com.exadel.frs.commonservice.sdk.embedding.feign.EmbeddingFeignClient;
 import com.exadel.frs.commonservice.system.global.EnvironmentProperties;
 import feign.Feign;
 import feign.Request;
@@ -37,14 +38,23 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class FeignClientsConfig {
 
-    @Value("${app.feign.faces.connect-timeout}")
+    @Value("\${app.feign.faces.connect-timeout}")
     private int facesConnectTimeout;
 
-    @Value("${app.feign.faces.read-timeout}")
+    @Value("\${app.feign.faces.read-timeout}")
     private int facesReadTimeout;
 
-    @Value("${app.feign.faces.retryer.max-attempts}")
+    @Value("\${app.feign.faces.retryer.max-attempts}")
     private int facesRetryerMaxAttempts;
+
+    @Value("\${app.feign.embedding.connect-timeout:5000}")
+    private int embeddingConnectTimeout;
+
+    @Value("\${app.feign.embedding.read-timeout:10000}")
+    private int embeddingReadTimeout;
+
+    @Value("\${app.feign.embedding.retryer.max-attempts:1}")
+    private int embeddingRetryerMaxAttempts;
 
     private final EnvironmentProperties properties;
 
@@ -60,7 +70,23 @@ public class FeignClientsConfig {
     }
 
     @Bean
+    public EmbeddingFeignClient embeddingFeignClient() {
+        return Feign.builder()
+                    .encoder(new JacksonEncoder())
+                    .decoder(new JacksonDecoder())
+                    .logLevel(FULL)
+                    .retryer(embeddingFeignRetryer())
+                    .options(new Request.Options(embeddingConnectTimeout, MILLISECONDS, embeddingReadTimeout, MILLISECONDS, true))
+                    .target(EmbeddingFeignClient.class, properties.getServers().get(PYTHON).getUrl());
+    }
+
+    @Bean
     public Retryer facesFeignRetryer() {
         return new Retryer.Default(100, toMillis(1), facesRetryerMaxAttempts);
+    }
+
+    @Bean
+    public Retryer embeddingFeignRetryer() {
+        return new Retryer.Default(100, toMillis(1), embeddingRetryerMaxAttempts);
     }
 }
