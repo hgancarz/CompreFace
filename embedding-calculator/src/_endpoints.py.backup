@@ -58,12 +58,13 @@ def endpoints(app):
         return None
 
     @app.route('/healthcheck')
-    def healthcheck():
+    @app.route('/health')
+    def health():
         return jsonify(
             status='OK'
         )
-    
     @app.route('/health')
+    def healthcheck():
     def health():
         return jsonify(
             status='OK'

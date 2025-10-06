@@ -21,6 +21,8 @@ import static com.zaxxer.hikari.util.ClockSource.toMillis;
 import static feign.Logger.Level.FULL;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import com.exadel.frs.commonservice.sdk.faces.feign.FacesFeignClient;
+import com.exadel.frs.commonservice.sdk.embedding.feign.EmbeddingCalculatorHealthClient;
+import com.exadel.frs.commonservice.sdk.embedding.feign.dto.HealthResponse;
 import com.exadel.frs.commonservice.system.global.EnvironmentProperties;
 import feign.Feign;
 import feign.Request;
@@ -63,4 +65,29 @@ public class FeignClientsConfig {
     public Retryer facesFeignRetryer() {
         return new Retryer.Default(100, toMillis(1), facesRetryerMaxAttempts);
     }
+}
+
+    @Value("${app.feign.embedding-health.connect-timeout:5000}")
+    private int embeddingHealthConnectTimeout;
+
+    @Value("${app.feign.embedding-health.read-timeout:5000}")
+    private int embeddingHealthReadTimeout;
+
+    @Value("${app.feign.embedding-health.retryer.max-attempts:1}")
+    private int embeddingHealthRetryerMaxAttempts;
+
+    @Bean
+    public EmbeddingCalculatorHealthClient embeddingCalculatorHealthClient() {
+        return Feign.builder()
+                    .encoder(new JacksonEncoder())
+                    .decoder(new JacksonDecoder())
+                    .logLevel(FULL)
+                    .retryer(embeddingHealthFeignRetryer())
+                    .options(new Request.Options(embeddingHealthConnectTimeout, MILLISECONDS, embeddingHealthReadTimeout, MILLISECONDS, true))
+                    .target(EmbeddingCalculatorHealthClient.class, properties.getServers().get(PYTHON).getUrl());
+    }
+
+    @Bean
+    public Retryer embeddingHealthFeignRetryer() {
+        return new Retryer.Default(100, toMillis(1), embeddingHealthRetryerMaxAttempts);
 }
