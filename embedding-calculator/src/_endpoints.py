@@ -57,6 +57,12 @@ def endpoints(app):
         print("Starting to load ML models")
         return None
 
+    @app.route('/health')
+    def health():
+        return jsonify(
+            status='OK'
+        )
+
     @app.route('/healthcheck')
     def healthcheck():
         return jsonify(

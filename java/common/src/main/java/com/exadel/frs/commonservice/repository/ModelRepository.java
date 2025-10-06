@@ -17,71 +17,41 @@
 package com.exadel.frs.commonservice.repository;
 
 import com.exadel.frs.commonservice.entity.Model;
-import com.exadel.frs.commonservice.enums.ModelType;
 import com.exadel.frs.commonservice.projection.ModelProjection;
-import com.exadel.frs.commonservice.projection.ModelSubjectProjection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ModelRepository extends JpaRepository<Model, Long> {
 
-    Optional<Model> findByApiKeyAndType(String apiKey, ModelType type);
+    Optional<Model> findByApiKey(String apiKey);
+
+    List<Model> findAllByAppId(Long appId);
 
     Stream<Model> findAllByIdIn(Set<Long> ids);
 
     Optional<Model> findByGuid(String guid);
 
-    @Query("""
-            select
-                case when count(m) > 0 then TRUE else FALSE end
-            from
-                Model m
-            where
-                lower(m.name) = lower(:name)
-            and
-                m.app.id = :appId
-            """)
+    @Query("select case when count(m) > 0 then TRUE else FALSE end from Model m where lower(m.name) = lower(:name) and m.app.id = :appId")
     boolean existsByUniqueNameAndAppId(String name, Long appId);
 
-    @Query("""
-            select
-                count(m)
-            from
-                Model m
-            where
-                lower(m.name) = lower(:name)
-            and
-                m.app.id = :appId
-            """)
-    int countByUniqueNameAndAppId(String name, Long appId);
+    @Query("select count(m) from Model m where lower(m.name) = lower(:name) and m.app.id = :appId")
+    long countByUniqueNameAndAppId(String name, Long appId);
 
-    @Query("""
-            select
-                new com.exadel.frs.commonservice.projection.ModelSubjectProjection(m.guid, count(s.id))
-            from
-                Model m
-            left join
-                Subject s on m.apiKey = s.apiKey
-            group by
-                m.guid
-            """)
-    List<ModelSubjectProjection> getModelSubjectsCount();
+    @Query("select new com.exadel.frs.commonservice.projection.ModelProjection(m.name, m.apiKey) from Model m where m.app.id = :appId")
+    List<ModelProjection> findModelProjectionsByAppId(Long appId);
 
-    @Query("""
-            select distinct
-                new com.exadel.frs.commonservice.projection.ModelProjection(m.guid, m.name, m.apiKey, m.type, m.createdDate)
-            from
-                Model m
-            left join
-                m.app a
-            where
-                a.id = :appId
-            """)
-    List<ModelProjection> findAllByAppId(Long appId);
+    @Modifying
+    @Query("update Model m set m.name = :name where m.id = :id")
+    void updateModelName(Long id, String name);
+
+    @Query("select m from Model m where m.app.id = :appId and m.apiKey = :apiKey")
+    Optional<Model> findByAppIdAndApiKey(@Param("appId") Long appId, @Param("apiKey") String apiKey);
 }

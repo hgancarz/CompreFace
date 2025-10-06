@@ -21,6 +21,7 @@ import static com.zaxxer.hikari.util.ClockSource.toMillis;
 import static feign.Logger.Level.FULL;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import com.exadel.frs.commonservice.sdk.faces.feign.FacesFeignClient;
+import com.exadel.frs.commonservice.system.feign.EmbeddingCalculatorHealthClient;
 import com.exadel.frs.commonservice.system.global.EnvironmentProperties;
 import feign.Feign;
 import feign.Request;
@@ -60,7 +61,23 @@ public class FeignClientsConfig {
     }
 
     @Bean
+    public EmbeddingCalculatorHealthClient embeddingCalculatorHealthClient() {
+        return Feign.builder()
+                    .encoder(new JacksonEncoder())
+                    .decoder(new JacksonDecoder())
+                    .logLevel(FULL)
+                    .retryer(healthFeignRetryer())
+                    .options(new Request.Options(5000, MILLISECONDS, 10000, MILLISECONDS, true))
+                    .target(EmbeddingCalculatorHealthClient.class, properties.getServers().get(PYTHON).getUrl());
+    }
+
+    @Bean
     public Retryer facesFeignRetryer() {
         return new Retryer.Default(100, toMillis(1), facesRetryerMaxAttempts);
+    }
+
+    @Bean
+    public Retryer healthFeignRetryer() {
+        return new Retryer.Default(100, toMillis(1), 1);
     }
 }

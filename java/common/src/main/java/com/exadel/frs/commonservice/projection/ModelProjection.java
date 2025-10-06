@@ -1,14 +1,19 @@
 package com.exadel.frs.commonservice.projection;
 
-import com.exadel.frs.commonservice.enums.ModelType;
-import java.time.LocalDateTime;
+public class ModelProjection {
+    private final String name;
+    private final String apiKey;
 
-public record ModelProjection(
+    public ModelProjection(String name, String apiKey) {
+        this.name = name;
+        this.apiKey = apiKey;
+    }
 
-        String guid,
-        String name,
-        String apiKey,
-        ModelType type,
-        LocalDateTime createdDate) {
+    public String name() {
+        return name;
+    }
 
+    public String apiKey() {
+        return apiKey;
+    }
 }
