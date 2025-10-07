@@ -165,3 +165,9 @@ def _limit(faces: List, limit: str = None) -> List:
         raise BadRequest('Limit value is invalid (limit >= 0)')
 
     return faces[:limit] if limit else faces
+
+    @app.route('/health')
+    def health():
+        return jsonify(
+            status='OK'
+        )
