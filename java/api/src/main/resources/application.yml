@@ -81,11 +81,17 @@ statistic:
     cron-expression: ${MODEL_STATISTIC_CRON_EXPRESSION:0 0 * ? * *}
 
 app:
+  services:
+    embedding-calculator:
+      url: ${EMBEDDING_CALCULATOR_URL:http://embedding-calculator:5000}
   feign:
     appery-io:
       url: https://api.appery.io/rest/1/db/collections
       api-key: ${APPERY_API_KEY:#{null}}
     faces:
+    embedding-calculator:
+      connect-timeout: ${EMBEDDING_CALCULATOR_CONNECT_TIMEOUT:5000}
+      read-timeout: ${EMBEDDING_CALCULATOR_READ_TIMEOUT:10000}
       connect-timeout: ${CONNECTION_TIMEOUT:10000}
       read-timeout: ${READ_TIMEOUT:60000}
       retryer:
