@@ -82,6 +82,10 @@ statistic:
 
 app:
   feign:
+    embedding-calculator:
+      url: ${EMBEDDING_CALCULATOR_URL:${environment.servers.PYTHON.url:http://compreface-core:3000}}
+      connect-timeout: ${EMBEDDING_CALCULATOR_CONNECTION_TIMEOUT:5000}
+      read-timeout: ${EMBEDDING_CALCULATOR_READ_TIMEOUT:10000}
     appery-io:
       url: https://api.appery.io/rest/1/db/collections
       api-key: ${APPERY_API_KEY:#{null}}
