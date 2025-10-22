@@ -6,6 +6,7 @@ import static com.exadel.frs.core.trainservice.system.global.Constants.CACHE_CON
 import static com.exadel.frs.core.trainservice.system.global.Constants.IMAGE_ID_DESC;
 import com.exadel.frs.commonservice.entity.Img;
 import com.exadel.frs.core.trainservice.service.EmbeddingService;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
@@ -40,5 +41,11 @@ public class StaticController {
         return embeddingService.getImg(apiKey, embeddingId)
                                .map(Img::getContent)
                                .orElse(new byte[]{});
+    }
+
+    @GetMapping("/hello")
+    @ApiOperation(value = "Returns hello world message")
+    public String helloWorld() {
+        return "hello world";
     }
 }
