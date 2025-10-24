@@ -27,6 +27,12 @@ public class ConfigController {
                         .build();
     }
 
+    @GetMapping("/hello")
+    @ApiOperation(value = "Returns hello world message")
+    public String getHelloWorld() {
+        return "hello world";
+    }
+
     private Long getNumericPropertyAsBytes(String propertyName) {
         return Optional.ofNullable(env.getProperty(propertyName))
                        .map(DataSize::parse)
