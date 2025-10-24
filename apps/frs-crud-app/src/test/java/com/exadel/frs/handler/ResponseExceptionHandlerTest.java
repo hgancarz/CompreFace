@@ -44,22 +44,23 @@ class ResponseExceptionHandlerTest {
     void handleUndefinedExceptions(final Exception ex) {
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(ex);
 
+        String expectedMessage = ex.getMessage() != null ? ex.getMessage() : "Something went wrong, please try again";
         ExceptionResponseDto expectedResponseDto = ExceptionResponseDto.builder()
                 .code(ExceptionCode.UNDEFINED.getCode())
-                .message(ex.getMessage()).build();
+                .message(expectedMessage).build();
 
         assertThat(response.getBody(), is(equalTo(expectedResponseDto)));
     }
 
     @Test
     void handleUndefinedExceptionWithNullMessage() {
-        // Test that undefined exceptions with null messages don't cause issues
+        // Test that undefined exceptions with null messages get default message
         Exception ex = new NullPointerException();
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(ex);
 
         assertThat(response.getBody().getCode(), is(ExceptionCode.UNDEFINED.getCode()));
-        // The message can be null for NullPointerException
-        assertThat(response.getBody().getMessage(), is(nullValue()));
+        // The message should be default message for NullPointerException
+        assertThat(response.getBody().getMessage(), is("Something went wrong, please try again"));
     }
 
     @Test
@@ -78,9 +79,9 @@ class ResponseExceptionHandlerTest {
         AccessDeniedException ex = new AccessDeniedException();
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleDefinedExceptions(ex);
 
-        assertThat(response.getBody().getCode(), is(ExceptionCode.ACCESS_DENIED.getCode()));
+        assertThat(response.getBody().getCode(), is(ExceptionCode.APP_ACCESS_DENIED.getCode()));
         assertThat(response.getBody().getMessage(), is("Access Denied. Application has read only access to model"));
-        assertThat(response.getStatusCode(), is(ExceptionCode.ACCESS_DENIED.getHttpStatus()));
+        assertThat(response.getStatusCode(), is(ExceptionCode.APP_ACCESS_DENIED.getHttpStatus()));
     }
 
     @Test
@@ -89,7 +90,7 @@ class ResponseExceptionHandlerTest {
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleDefinedExceptions(ex);
 
         assertThat(response.getBody().getCode(), is(ExceptionCode.SELF_ROLE_CHANGE.getCode()));
-        assertThat(response.getBody().getMessage(), is("Owner cannot change his own organization/application role"));
+        assertThat(response.getBody().getMessage(), is("Organization should have at least one OWNER"));
         assertThat(response.getStatusCode(), is(ExceptionCode.SELF_ROLE_CHANGE.getHttpStatus()));
     }
 

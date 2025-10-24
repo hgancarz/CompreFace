@@ -14,10 +14,10 @@ class ExceptionCodeTest {
 
     @Test
     void testAccessDeniedExceptionCodeAndMessage() {
-        // Test current behavior - ACCESS_DENIED code and message
+        // Test current behavior - APP_ACCESS_DENIED code and message
         AccessDeniedException exception = new AccessDeniedException();
         
-        assertThat(exception.getExceptionCode(), is(ExceptionCode.ACCESS_DENIED));
+        assertThat(exception.getExceptionCode(), is(ExceptionCode.APP_ACCESS_DENIED));
         assertThat(exception.getExceptionCode().getCode(), is(1));
         assertThat(exception.getExceptionCode().getHttpStatus(), is(FORBIDDEN));
         assertThat(exception.getMessage(), is("Access Denied. Application has read only access to model"));
@@ -38,18 +38,18 @@ class ExceptionCodeTest {
         assertThat(exception.getExceptionCode(), is(ExceptionCode.SELF_ROLE_CHANGE));
         assertThat(exception.getExceptionCode().getCode(), is(14));
         assertThat(exception.getExceptionCode().getHttpStatus(), is(BAD_REQUEST));
-        assertThat(exception.getMessage(), is("Owner cannot change his own organization/application role"));
+        assertThat(exception.getMessage(), is("Organization should have at least one OWNER"));
     }
 
     @Test
     void testExceptionCodeValues() {
         // Verify all exception codes have unique values
-        assertThat(ExceptionCode.ACCESS_DENIED.getCode(), is(1));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.getCode(), is(1));
         assertThat(ExceptionCode.UNDEFINED.getCode(), is(0));
         assertThat(ExceptionCode.SELF_ROLE_CHANGE.getCode(), is(14));
         
         // Verify HTTP status codes
-        assertThat(ExceptionCode.ACCESS_DENIED.getHttpStatus(), is(FORBIDDEN));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.getHttpStatus(), is(FORBIDDEN));
         assertThat(ExceptionCode.UNDEFINED.getHttpStatus(), is(BAD_REQUEST));
         assertThat(ExceptionCode.SELF_ROLE_CHANGE.getHttpStatus(), is(BAD_REQUEST));
     }
