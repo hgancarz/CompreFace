@@ -41,25 +41,25 @@ class ResponseExceptionHandlerTest {
 
     @ParameterizedTest
     @MethodSource("undefinedExceptions")
-    void handleUndefinedExceptions(final Exception ex) {
+    void handleUndefinedExceptions(final Exception ex, final String expectedMessage) {
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(ex);
 
         ExceptionResponseDto expectedResponseDto = ExceptionResponseDto.builder()
                 .code(ExceptionCode.UNDEFINED.getCode())
-                .message(ex.getMessage()).build();
+                .message(expectedMessage).build();
 
         assertThat(response.getBody(), is(equalTo(expectedResponseDto)));
     }
 
     @Test
     void handleUndefinedExceptionWithNullMessage() {
-        // Test that undefined exceptions with null messages don't cause issues
+        // Test that undefined exceptions with null messages get default message
         Exception ex = new NullPointerException();
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(ex);
 
         assertThat(response.getBody().getCode(), is(ExceptionCode.UNDEFINED.getCode()));
-        // The message can be null for NullPointerException
-        assertThat(response.getBody().getMessage(), is(nullValue()));
+        // The message should be default message for null messages
+        assertThat(response.getBody().getMessage(), is("Something went wrong, please try again"));
     }
 
     @Test
@@ -74,13 +74,24 @@ class ResponseExceptionHandlerTest {
     }
 
     @Test
+    void handleUndefinedExceptionWithEmptyMessage() {
+        // Test that undefined exceptions with empty messages get default message
+        Exception ex = new Exception("");
+        ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(ex);
+
+        assertThat(response.getBody().getCode(), is(ExceptionCode.UNDEFINED.getCode()));
+        // The message should be default message for empty messages
+        assertThat(response.getBody().getMessage(), is("Something went wrong, please try again"));
+    }
+
+    @Test
     void testAccessDeniedExceptionResponse() {
         AccessDeniedException ex = new AccessDeniedException();
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleDefinedExceptions(ex);
 
-        assertThat(response.getBody().getCode(), is(ExceptionCode.ACCESS_DENIED.getCode()));
+        assertThat(response.getBody().getCode(), is(ExceptionCode.APP_ACCESS_DENIED.getCode()));
         assertThat(response.getBody().getMessage(), is("Access Denied. Application has read only access to model"));
-        assertThat(response.getStatusCode(), is(ExceptionCode.ACCESS_DENIED.getHttpStatus()));
+        assertThat(response.getStatusCode(), is(ExceptionCode.APP_ACCESS_DENIED.getHttpStatus()));
     }
 
     @Test
@@ -89,7 +100,7 @@ class ResponseExceptionHandlerTest {
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleDefinedExceptions(ex);
 
         assertThat(response.getBody().getCode(), is(ExceptionCode.SELF_ROLE_CHANGE.getCode()));
-        assertThat(response.getBody().getMessage(), is("Owner cannot change his own organization/application role"));
+        assertThat(response.getBody().getMessage(), is("Organization should have at least one OWNER"));
         assertThat(response.getStatusCode(), is(ExceptionCode.SELF_ROLE_CHANGE.getHttpStatus()));
     }
 
@@ -102,9 +113,9 @@ class ResponseExceptionHandlerTest {
 
     private static Stream<Arguments> undefinedExceptions() {
         return Stream.of(
-                Arguments.of(new NullPointerException()),
-                Arguments.of(new IllegalArgumentException("Test message")),
-                Arguments.of(new RuntimeException("Another test"))
+                Arguments.of(new NullPointerException(), "Something went wrong, please try again"),
+                Arguments.of(new IllegalArgumentException("Test message"), "Test message"),
+                Arguments.of(new RuntimeException("Another test"), "Another test")
         );
     }
 }
