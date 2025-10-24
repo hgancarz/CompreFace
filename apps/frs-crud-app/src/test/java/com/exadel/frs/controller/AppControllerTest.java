@@ -115,7 +115,7 @@ class AppControllerTest {
     private ExceptionResponseDto buildUndefinedExceptionResponse(final Exception ex) {
         return ExceptionResponseDto.builder()
                 .code(ExceptionCode.UNDEFINED.getCode())
-                .message(ex.getMessage())
+                .message("Something went wrong, please try again")
                 .build();
     }
 }
