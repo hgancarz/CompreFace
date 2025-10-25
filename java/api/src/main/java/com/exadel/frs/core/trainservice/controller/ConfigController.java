@@ -18,6 +18,12 @@ public class ConfigController {
 
     private final Environment env;
 
+    @GetMapping("/hello")
+    @ApiOperation(value = "Returns hello world message")
+    public String getHelloWorld() {
+        return "hello world";
+    }
+
     @GetMapping
     @ApiOperation(value = "Returns configuration properties of the application")
     public ConfigDto getConfig() {
