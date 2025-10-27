@@ -34,4 +34,10 @@ public class AppStatusController {
             return new AppStatusResponseDto(NOT_READY);
         }
     }
+
+    @GetMapping("/hello")
+    @ApiOperation(value = "Returns hello world")
+    public String getHelloWorld() {
+        return "hello world";
+    }
 }
