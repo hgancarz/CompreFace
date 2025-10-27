@@ -41,4 +41,9 @@ public class StaticController {
                                .map(Img::getContent)
                                .orElse(new byte[]{});
     }
+
+    @GetMapping("/hello")
+    public String helloWorld() {
+        return "hello world";
+    }
 }
