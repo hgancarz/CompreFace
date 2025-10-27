@@ -81,7 +81,7 @@ class AppControllerTest {
 
         when(appService.getApps(ORG_GUID, USER_ID)).thenThrow(expectedException);
 
-        String expectedContent = mapper.writeValueAsString(buildUndefinedExceptionResponse(expectedException));
+        String expectedContent = mapper.writeValueAsString(buildUndefinedExceptionResponse());
         mockMvc.perform(get("/org/" + ORG_GUID + "/apps").with(user(buildDefaultUser())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(expectedContent));
@@ -112,10 +112,10 @@ class AppControllerTest {
                 .build();
     }
 
-    private ExceptionResponseDto buildUndefinedExceptionResponse(final Exception ex) {
+    private ExceptionResponseDto buildUndefinedExceptionResponse() {
         return ExceptionResponseDto.builder()
                 .code(ExceptionCode.UNDEFINED.getCode())
-                .message(ex.getMessage())
+                .message("Something went wrong, please try again")
                 .build();
     }
 }
