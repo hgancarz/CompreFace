@@ -158,3 +158,6 @@ def s(count):  # NOSONAR
 def get_nearest_point_idx(target_point: Tuple[int, int], points: List[Tuple[int, int]]):
     # noinspection PyTypeChecker
     return distance.cdist([target_point], points).argmin()
+def hello_world():
+    """Return the classic greeting used in tests/PR description."""
+    return "hello world"
