@@ -37,14 +37,14 @@ class ExceptionCodeRequirementsTest {
         // - The exception message should remain "Access Denied. Application has read only access to model"
         
         // Current state (before change):
-        assertEquals(ExceptionCode.ACCESS_DENIED, exception.getExceptionCode());
-        assertEquals(1, exception.getExceptionCode().getCode());
-        assertEquals("Access Denied. Application has read only access to model", exception.getMessage());
-        
-        // Expected state (after change):
-        // assertEquals(ExceptionCode.APP_ACCESS_DENIED, exception.getExceptionCode());
+        // assertEquals(ExceptionCode.ACCESS_DENIED, exception.getExceptionCode());
         // assertEquals(1, exception.getExceptionCode().getCode());
         // assertEquals("Access Denied. Application has read only access to model", exception.getMessage());
+        
+        // Expected state (after change):
+        assertEquals(ExceptionCode.APP_ACCESS_DENIED, exception.getExceptionCode());
+        assertEquals(1, exception.getExceptionCode().getCode());
+        assertEquals("Access Denied. Application has read only access to model", exception.getMessage());
     }
 
     @Test
@@ -60,36 +60,36 @@ class ExceptionCodeRequirementsTest {
         ResponseEntity<ExceptionResponseDto> response1 = exceptionHandler.handleUndefinedExceptions(npeWithMessage);
         
         // Current state (before change):
-        assertEquals(ExceptionCode.UNDEFINED.getCode(), response1.getBody().getCode());
-        assertEquals("Test null pointer", response1.getBody().getMessage());
+        // assertEquals(ExceptionCode.UNDEFINED.getCode(), response1.getBody().getCode());
+        // assertEquals("Test null pointer", response1.getBody().getMessage());
         
         // Expected state (after change):
-        // assertEquals(ExceptionCode.UNDEFINED.getCode(), response1.getBody().getCode());
-        // assertEquals("Something went wrong, please try again", response1.getBody().getMessage());
+        assertEquals(ExceptionCode.UNDEFINED.getCode(), response1.getBody().getCode());
+        assertEquals("Something went wrong, please try again", response1.getBody().getMessage());
         
         // Test with NullPointerException without message
         NullPointerException npeWithoutMessage = new NullPointerException();
         ResponseEntity<ExceptionResponseDto> response2 = exceptionHandler.handleUndefinedExceptions(npeWithoutMessage);
         
         // Current state (before change):
-        assertEquals(ExceptionCode.UNDEFINED.getCode(), response2.getBody().getCode());
+        // assertEquals(ExceptionCode.UNDEFINED.getCode(), response2.getBody().getCode());
         // Note: Currently returns null for message when original exception has null message
         
         // Expected state (after change):
-        // assertEquals(ExceptionCode.UNDEFINED.getCode(), response2.getBody().getCode());
-        // assertEquals("Something went wrong, please try again", response2.getBody().getMessage());
+        assertEquals(ExceptionCode.UNDEFINED.getCode(), response2.getBody().getCode());
+        assertEquals("Something went wrong, please try again", response2.getBody().getMessage());
         
         // Test with other exception types
         IllegalArgumentException iae = new IllegalArgumentException("Invalid argument");
         ResponseEntity<ExceptionResponseDto> response3 = exceptionHandler.handleUndefinedExceptions(iae);
         
         // Current state (before change):
-        assertEquals(ExceptionCode.UNDEFINED.getCode(), response3.getBody().getCode());
-        assertEquals("Invalid argument", response3.getBody().getMessage());
+        // assertEquals(ExceptionCode.UNDEFINED.getCode(), response3.getBody().getCode());
+        // assertEquals("Invalid argument", response3.getBody().getMessage());
         
         // Expected state (after change):
-        // assertEquals(ExceptionCode.UNDEFINED.getCode(), response3.getBody().getCode());
-        // assertEquals("Something went wrong, please try again", response3.getBody().getMessage());
+        assertEquals(ExceptionCode.UNDEFINED.getCode(), response3.getBody().getCode());
+        assertEquals("Something went wrong, please try again", response3.getBody().getMessage());
     }
 
     @Test
@@ -101,14 +101,14 @@ class ExceptionCodeRequirementsTest {
         // - The exception message should change to "Organization should have at least one OWNER"
         
         // Current state (before change):
-        assertEquals(ExceptionCode.SELF_ROLE_CHANGE, exception.getExceptionCode());
-        assertEquals(14, exception.getExceptionCode().getCode());
-        assertEquals("Owner cannot change his own organization/application role", exception.getMessage());
-        
-        // Expected state (after change):
         // assertEquals(ExceptionCode.SELF_ROLE_CHANGE, exception.getExceptionCode());
         // assertEquals(14, exception.getExceptionCode().getCode());
-        // assertEquals("Organization should have at least one OWNER", exception.getMessage());
+        // assertEquals("Owner cannot change his own organization/application role", exception.getMessage());
+        
+        // Expected state (after change):
+        assertEquals(ExceptionCode.SELF_ROLE_CHANGE, exception.getExceptionCode());
+        assertEquals(14, exception.getExceptionCode().getCode());
+        assertEquals("Organization should have at least one OWNER", exception.getMessage());
     }
 
     @Test
@@ -116,7 +116,7 @@ class ExceptionCodeRequirementsTest {
         // Verify that exception codes have the expected values as per PR description
         
         // ACCESS_DENIED (should be APP_ACCESS_DENIED after change) - code 1
-        assertEquals(1, ExceptionCode.ACCESS_DENIED.getCode());
+        assertEquals(1, ExceptionCode.APP_ACCESS_DENIED.getCode());
         
         // UNDEFINED - code 0
         assertEquals(0, ExceptionCode.UNDEFINED.getCode());

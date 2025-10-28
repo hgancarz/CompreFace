@@ -18,8 +18,8 @@ public class ExceptionMessageVerifier {
      */
     public static void verifyAccessDeniedException(AccessDeniedException exception) {
         // Current state verification
-        assert ExceptionCode.ACCESS_DENIED.equals(exception.getExceptionCode()) : 
-            "Expected ACCESS_DENIED exception code, but got: " + exception.getExceptionCode();
+        assert ExceptionCode.APP_ACCESS_DENIED.equals(exception.getExceptionCode()) : 
+            "Expected APP_ACCESS_DENIED exception code, but got: " + exception.getExceptionCode();
         assert 1 == exception.getExceptionCode().getCode() : 
             "Expected code 1, but got: " + exception.getExceptionCode().getCode();
         assert "Access Denied. Application has read only access to model".equals(exception.getMessage()) : 

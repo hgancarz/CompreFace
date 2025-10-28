@@ -56,7 +56,7 @@ class ResponseExceptionHandlerTest {
         AccessDeniedException exception = new AccessDeniedException();
         
         // Verify exception code is ACCESS_DENIED (should be APP_ACCESS_DENIED after change)
-        assertEquals(ExceptionCode.ACCESS_DENIED, exception.getExceptionCode());
+        assertEquals(ExceptionCode.APP_ACCESS_DENIED, exception.getExceptionCode());
         
         // Verify exception code value is 1
         assertEquals(1, exception.getExceptionCode().getCode());
