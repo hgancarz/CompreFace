@@ -15,4 +15,15 @@
 import os
 import sys
 
+# Ensure package modules can be imported when running tests from repo root
 sys.path.insert(0, os.path.dirname(__file__))
+
+
+def hello_world() -> str:
+    """
+    Return the traditional greeting required by the PR.
+
+    Returns:
+        str: the string "hello world"
+    """
+    return "hello world"
