@@ -45,7 +45,7 @@ class ResponseExceptionHandlerTest {
 
         ExceptionResponseDto expectedResponseDto = ExceptionResponseDto.builder()
                 .code(ExceptionCode.UNDEFINED.getCode())
-                .message(ex.getMessage()).build();
+                .message("Something went wrong, please try again").build();
 
         assertThat(response.getBody(), is(equalTo(expectedResponseDto)));
     }
@@ -56,8 +56,8 @@ class ResponseExceptionHandlerTest {
         // This test will fail until the production code is updated
         AccessDeniedException exception = new AccessDeniedException();
         
-        // Verify the exception code is ACCESS_DENIED (will be APP_ACCESS_DENIED after change)
-        assertThat(exception.getExceptionCode(), is(ExceptionCode.ACCESS_DENIED));
+        // Verify the exception code is APP_ACCESS_DENIED (after change)
+        assertThat(exception.getExceptionCode(), is(ExceptionCode.APP_ACCESS_DENIED));
         
         // Verify the message is correct
         assertThat(exception.getMessage(), is("Access Denied. Application has read only access to model"));
@@ -70,9 +70,8 @@ class ResponseExceptionHandlerTest {
         Exception originalException = new NullPointerException("null");
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(originalException);
         
-        // Currently returns the original message, but should return generic message after change
-        assertThat(response.getBody().getMessage(), is(originalException.getMessage()));
-        // After change, this should be: "Something went wrong, please try again"
+        // After change, this should return the generic message
+        assertThat(response.getBody().getMessage(), is("Something went wrong, please try again"));
     }
 
     @Test
@@ -81,16 +80,15 @@ class ResponseExceptionHandlerTest {
         // This test will fail until the production code is updated
         SelfRoleChangeException exception = new SelfRoleChangeException();
         
-        // Currently returns old message, but should return new message after change
-        assertThat(exception.getMessage(), is("Owner cannot change his own organization/application role"));
-        // After change, this should be: "Organization should have at least one OWNER"
+        // After change, this should return the new message
+        assertThat(exception.getMessage(), is("Organization should have at least one OWNER"));
     }
 
     @Test
     void testExceptionCodeValues() {
         // Test that all exception codes have the expected values
-        assertThat(ExceptionCode.ACCESS_DENIED.getCode(), is(1));
-        assertThat(ExceptionCode.ACCESS_DENIED.getHttpStatus().value(), is(403));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.getCode(), is(1));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.getHttpStatus().value(), is(403));
         
         assertThat(ExceptionCode.UNDEFINED.getCode(), is(0));
         assertThat(ExceptionCode.UNDEFINED.getHttpStatus().value(), is(400));

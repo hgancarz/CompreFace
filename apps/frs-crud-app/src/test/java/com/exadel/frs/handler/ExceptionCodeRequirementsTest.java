@@ -75,8 +75,8 @@ class ExceptionCodeRequirementsTest {
     void testExceptionCodeValuesAreCorrect() {
         // Verify that the exception codes have the correct numeric values and HTTP statuses
         
-        // Test ACCESS_DENIED (will be APP_ACCESS_DENIED after change)
-        ExceptionCode accessDeniedCode = ExceptionCode.ACCESS_DENIED;
+        // Test APP_ACCESS_DENIED (after change)
+        ExceptionCode accessDeniedCode = ExceptionCode.APP_ACCESS_DENIED;
         assertThat(accessDeniedCode.getCode(), is(1));
         assertThat(accessDeniedCode.getHttpStatus().value(), is(403));
         
