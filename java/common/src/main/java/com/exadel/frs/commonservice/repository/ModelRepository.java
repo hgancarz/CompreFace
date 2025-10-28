@@ -37,51 +37,43 @@ public interface ModelRepository extends JpaRepository<Model, Long> {
 
     Optional<Model> findByGuid(String guid);
 
-    @Query("""
-            select
-                case when count(m) > 0 then TRUE else FALSE end
-            from
-                Model m
-            where
-                lower(m.name) = lower(:name)
-            and
-                m.app.id = :appId
-            """)
+    @Query("select " +
+            "case when count(m) > 0 then TRUE else FALSE end " +
+            "from " +
+            "Model m " +
+            "where " +
+            "lower(m.name) = lower(:name) " +
+            "and " +
+            "m.app.id = :appId")
     boolean existsByUniqueNameAndAppId(String name, Long appId);
 
-    @Query("""
-            select
-                count(m)
-            from
-                Model m
-            where
-                lower(m.name) = lower(:name)
-            and
-                m.app.id = :appId
-            """)
+    @Query("select " +
+            "count(m) " +
+            "from " +
+            "Model m " +
+            "where " +
+            "lower(m.name) = lower(:name) " +
+            "and " +
+            "m.app.id = :appId")
     int countByUniqueNameAndAppId(String name, Long appId);
 
-    @Query("""
-            select
-                new com.exadel.frs.commonservice.projection.ModelSubjectProjection(m.guid, count(s.id))
-            from
-                Model m
-            left join
-                Subject s on m.apiKey = s.apiKey
-            group by
-                m.guid
-            """)
+    @Query("select " +
+            "new com.exadel.frs.commonservice.projection.ModelSubjectProjection(m.guid, count(s.id)) " +
+            "from " +
+            "Model m " +
+            "left join " +
+            "Subject s on m.apiKey = s.apiKey " +
+            "group by " +
+            "m.guid")
     List<ModelSubjectProjection> getModelSubjectsCount();
 
-    @Query("""
-            select distinct
-                new com.exadel.frs.commonservice.projection.ModelProjection(m.guid, m.name, m.apiKey, m.type, m.createdDate)
-            from
-                Model m
-            left join
-                m.app a
-            where
-                a.id = :appId
-            """)
+    @Query("select distinct " +
+            "new com.exadel.frs.commonservice.projection.ModelProjection(m.guid, m.name, m.apiKey, m.type, m.createdDate) " +
+            "from " +
+            "Model m " +
+            "left join " +
+            "m.app a " +
+            "where " +
+            "a.id = :appId")
     List<ModelProjection> findAllByAppId(Long appId);
 }

@@ -1,9 +1,25 @@
 package com.exadel.frs.commonservice.projection;
 
 import com.exadel.frs.commonservice.entity.Embedding;
+import java.util.Objects;
 import java.util.UUID;
 
-public record EmbeddingProjection(UUID embeddingId, String subjectName) {
+public class EmbeddingProjection {
+    private final UUID embeddingId;
+    private final String subjectName;
+
+    public EmbeddingProjection(UUID embeddingId, String subjectName) {
+        this.embeddingId = embeddingId;
+        this.subjectName = subjectName;
+    }
+
+    public UUID embeddingId() {
+        return embeddingId;
+    }
+
+    public String subjectName() {
+        return subjectName;
+    }
 
     public static EmbeddingProjection from(Embedding embedding) {
         return new EmbeddingProjection(
@@ -24,5 +40,18 @@ public record EmbeddingProjection(UUID embeddingId, String subjectName) {
                 this.embeddingId(),
                 newSubjectName
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmbeddingProjection that = (EmbeddingProjection) o;
+        return Objects.equals(embeddingId, that.embeddingId) && Objects.equals(subjectName, that.subjectName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(embeddingId, subjectName);
     }
 }

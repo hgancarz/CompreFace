@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -218,7 +219,7 @@ public class EmbeddingController {
         List<Embedding> list = subjectService.removeSubjectEmbeddings(apiKey, embeddingIds);
         List<EmbeddingDto> dtoList = list.stream()
                                          .map(c -> new EmbeddingDto(c.getId().toString(), c.getSubject().getSubjectName()))
-                                         .toList();
+                                         .collect(Collectors.toList());
         return dtoList;
     }
 

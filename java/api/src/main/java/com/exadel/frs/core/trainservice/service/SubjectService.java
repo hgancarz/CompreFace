@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -299,7 +300,7 @@ public class SubjectService {
                 Arrays.stream(targets)
                       .map(target -> processTarget(target, sourceId, apiKey))
                       .sorted((e1, e2) -> Float.compare(e2.getSimilarity(), e1.getSimilarity()))
-                      .toList();
+                      .collect(Collectors.toList());
 
         return new EmbeddingsVerificationProcessResponse(results);
     }

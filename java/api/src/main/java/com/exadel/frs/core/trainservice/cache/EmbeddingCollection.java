@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -76,7 +77,7 @@ public class EmbeddingCollection {
         final List<EmbeddingProjection> projections = projection2Index.keySet()
                 .stream()
                 .filter(projection -> projection.subjectName().equals(oldSubjectName))
-                .toList();
+                .collect(Collectors.toList());
 
         projections.forEach(projection -> projection2Index.put(
                 projection.withNewSubjectName(newSubjectName),
@@ -106,7 +107,7 @@ public class EmbeddingCollection {
 
         final List<EmbeddingProjection> toRemove = projection2Index.keySet().stream()
                 .filter(projection -> projection.subjectName().equals(subjectName))
-                .toList();
+                .collect(Collectors.toList());
 
         toRemove.forEach(this::removeEmbedding); // <- rethink
 
