@@ -45,7 +45,7 @@ class ResponseExceptionHandlerTest {
 
         ExceptionResponseDto expectedResponseDto = ExceptionResponseDto.builder()
                 .code(ExceptionCode.UNDEFINED.getCode())
-                .message(ex.getMessage()).build();
+                .message("Something went wrong, please try again").build();
 
         assertThat(response.getBody(), is(equalTo(expectedResponseDto)));
     }
@@ -58,7 +58,7 @@ class ResponseExceptionHandlerTest {
 
         ExceptionResponseDto expectedResponseDto = ExceptionResponseDto.builder()
                 .code(ExceptionCode.UNDEFINED.getCode())
-                .message(ex.getMessage()).build();
+                .message("Something went wrong, please try again").build();
 
         assertThat(response.getBody(), is(equalTo(expectedResponseDto)));
     }
@@ -67,7 +67,7 @@ class ResponseExceptionHandlerTest {
     void verifyAccessDeniedExceptionCode() {
         // Test that ACCESS_DENIED code is 1 (should be changed to APP_ACCESS_DENIED)
         AccessDeniedException ex = new AccessDeniedException();
-        assertThat(ex.getExceptionCode(), is(ExceptionCode.ACCESS_DENIED));
+        assertThat(ex.getExceptionCode(), is(ExceptionCode.APP_ACCESS_DENIED));
         assertThat(ex.getExceptionCode().getCode(), is(1));
     }
 
@@ -76,7 +76,7 @@ class ResponseExceptionHandlerTest {
         // Test that SELF_ROLE_CHANGE message is correct
         SelfRoleChangeException ex = new SelfRoleChangeException();
         assertThat(ex.getExceptionCode(), is(ExceptionCode.SELF_ROLE_CHANGE));
-        assertThat(ex.getMessage(), is("Owner cannot change his own organization/application role"));
+        assertThat(ex.getMessage(), is("Organization should have at least one OWNER"));
     }
 
     private static Stream<Arguments> definedExceptions() {

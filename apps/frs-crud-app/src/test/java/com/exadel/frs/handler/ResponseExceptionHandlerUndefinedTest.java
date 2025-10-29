@@ -29,7 +29,7 @@ class ResponseExceptionHandlerUndefinedTest {
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(ex);
 
         // Current behavior: returns the actual exception message (which is null)
-        assertThat(response.getBody().getMessage(), is((String) null));
+        assertThat(response.getBody().getMessage(), is("Something went wrong, please try again"));
         assertThat(response.getBody().getCode(), is(ExceptionCode.UNDEFINED.getCode()));
         
         // After requirement #2 is implemented, this should be:
@@ -44,7 +44,7 @@ class ResponseExceptionHandlerUndefinedTest {
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(ex);
 
         // Current behavior: returns the actual exception message
-        assertThat(response.getBody().getMessage(), is(exceptionMessage));
+        assertThat(response.getBody().getMessage(), is("Something went wrong, please try again"));
         assertThat(response.getBody().getCode(), is(ExceptionCode.UNDEFINED.getCode()));
         
         // After requirement #2 is implemented, this should be:
@@ -70,7 +70,7 @@ class ResponseExceptionHandlerUndefinedTest {
             ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(ex);
             
             // Current behavior - returns actual message
-            assertThat(response.getBody().getMessage(), is(ex.getMessage()));
+            assertThat(response.getBody().getMessage(), is("Something went wrong, please try again"));
             
             // After requirement #2 - should all return the same generic message
             // assertThat(response.getBody().getMessage(), is("Something went wrong, please try again"));

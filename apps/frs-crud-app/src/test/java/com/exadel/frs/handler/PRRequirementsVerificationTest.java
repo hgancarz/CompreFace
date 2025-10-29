@@ -39,10 +39,10 @@ class PRRequirementsVerificationTest {
     }
 
     private void verifyRequirement1() {
-        // Current state - ACCESS_DENIED exists
-        assertThat(ExceptionCode.ACCESS_DENIED.name(), is("ACCESS_DENIED"));
-        assertThat(ExceptionCode.ACCESS_DENIED.getCode(), is(1));
-        assertThat(ExceptionCode.ACCESS_DENIED.getHttpStatus(), is(FORBIDDEN));
+        // Current state - APP_ACCESS_DENIED exists
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.name(), is("APP_ACCESS_DENIED"));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.getCode(), is(1));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.getHttpStatus(), is(FORBIDDEN));
         
         // After implementation:
         // - ExceptionCode.ACCESS_DENIED should be renamed to APP_ACCESS_DENIED
@@ -58,11 +58,11 @@ class PRRequirementsVerificationTest {
         // Current behavior: undefined exceptions return their actual message
         Exception nullPointerEx = new NullPointerException();
         ResponseEntity<ExceptionResponseDto> response1 = exceptionHandler.handleUndefinedExceptions(nullPointerEx);
-        assertThat(response1.getBody().getMessage(), is((String) null));
+        assertThat(response1.getBody().getMessage(), is("Something went wrong, please try again"));
         
         Exception illegalArgEx = new IllegalArgumentException("Test message");
         ResponseEntity<ExceptionResponseDto> response2 = exceptionHandler.handleUndefinedExceptions(illegalArgEx);
-        assertThat(response2.getBody().getMessage(), is("Test message"));
+        assertThat(response2.getBody().getMessage(), is("Something went wrong, please try again"));
         
         // After implementation:
         // - ALL undefined exceptions should return: "Something went wrong, please try again"
@@ -76,7 +76,7 @@ class PRRequirementsVerificationTest {
     private void verifyRequirement3() {
         // Current message
         SelfRoleChangeException selfRoleChangeEx = new SelfRoleChangeException();
-        assertThat(selfRoleChangeEx.getMessage(), is("Owner cannot change his own organization/application role"));
+        assertThat(selfRoleChangeEx.getMessage(), is("Organization should have at least one OWNER"));
         
         // After implementation:
         // - The message should be changed to: "Organization should have at least one OWNER"

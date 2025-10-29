@@ -16,8 +16,8 @@ class ExceptionCodeTest {
         // Test current values - these should be updated according to PR requirements
         
         // ACCESS_DENIED should be changed to APP_ACCESS_DENIED
-        assertThat(ExceptionCode.ACCESS_DENIED.getCode(), is(1));
-        assertThat(ExceptionCode.ACCESS_DENIED.getHttpStatus(), is(FORBIDDEN));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.getCode(), is(1));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.getHttpStatus(), is(FORBIDDEN));
         
         // UNDEFINED should have code 0 and BAD_REQUEST status
         assertThat(ExceptionCode.UNDEFINED.getCode(), is(0));
@@ -32,7 +32,7 @@ class ExceptionCodeTest {
     void verifyExceptionCodeNames() {
         // Test that the enum names are as expected
         // This test will need to be updated when ACCESS_DENIED is renamed to APP_ACCESS_DENIED
-        assertThat(ExceptionCode.ACCESS_DENIED.name(), is("ACCESS_DENIED"));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.name(), is("APP_ACCESS_DENIED"));
         assertThat(ExceptionCode.UNDEFINED.name(), is("UNDEFINED"));
         assertThat(ExceptionCode.SELF_ROLE_CHANGE.name(), is("SELF_ROLE_CHANGE"));
     }

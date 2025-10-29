@@ -14,14 +14,14 @@ class ExceptionMessageTest {
         // Current message - should remain the same according to PR
         AccessDeniedException ex = new AccessDeniedException();
         assertThat(ex.getMessage(), is("Access Denied. Application has read only access to model"));
-        assertThat(ex.getExceptionCode(), is(ExceptionCode.ACCESS_DENIED));
+        assertThat(ex.getExceptionCode(), is(ExceptionCode.APP_ACCESS_DENIED));
     }
 
     @Test
     void verifySelfRoleChangeExceptionMessage() {
         // Current message - should be changed to "Organization should have at least one OWNER"
         SelfRoleChangeException ex = new SelfRoleChangeException();
-        assertThat(ex.getMessage(), is("Owner cannot change his own organization/application role"));
+        assertThat(ex.getMessage(), is("Organization should have at least one OWNER"));
         assertThat(ex.getExceptionCode(), is(ExceptionCode.SELF_ROLE_CHANGE));
     }
     

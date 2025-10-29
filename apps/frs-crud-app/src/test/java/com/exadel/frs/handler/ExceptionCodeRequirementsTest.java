@@ -23,7 +23,7 @@ class ExceptionCodeRequirementsTest {
         // This test will fail until ExceptionCode.ACCESS_DENIED is renamed to APP_ACCESS_DENIED
         
         // Verify current state (this will fail after the change)
-        assertThat(ExceptionCode.ACCESS_DENIED.name(), is("ACCESS_DENIED"));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.name(), is("APP_ACCESS_DENIED"));
         
         // After change, this should be:
         // assertThat(ExceptionCode.APP_ACCESS_DENIED.name(), is("APP_ACCESS_DENIED"));
@@ -49,7 +49,7 @@ class ExceptionCodeRequirementsTest {
         
         // Current message
         SelfRoleChangeException ex = new SelfRoleChangeException();
-        assertThat(ex.getMessage(), is("Owner cannot change his own organization/application role"));
+        assertThat(ex.getMessage(), is("Organization should have at least one OWNER"));
         
         // After change, this should be:
         // assertThat(ex.getMessage(), is("Organization should have at least one OWNER"));
