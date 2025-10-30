@@ -12,15 +12,15 @@ class ExceptionCodeTest {
 
     @Test
     void testAccessDeniedExceptionCodeAndMessage() {
-        // Test that ACCESS_DENIED exception code exists with correct values
-        ExceptionCode accessDeniedCode = ExceptionCode.ACCESS_DENIED;
+        // Test that APP_ACCESS_DENIED exception code exists with correct values
+        ExceptionCode accessDeniedCode = ExceptionCode.APP_ACCESS_DENIED;
         
         assertThat(accessDeniedCode.getCode(), is(1));
         assertThat(accessDeniedCode.getHttpStatus(), is(HttpStatus.FORBIDDEN));
         
         // Test that AccessDeniedException uses the correct code and message
         AccessDeniedException exception = new AccessDeniedException();
-        assertThat(exception.getExceptionCode(), is(ExceptionCode.ACCESS_DENIED));
+        assertThat(exception.getExceptionCode(), is(ExceptionCode.APP_ACCESS_DENIED));
         assertThat(exception.getMessage(), is("Access Denied. Application has read only access to model"));
     }
 
@@ -44,6 +44,6 @@ class ExceptionCodeTest {
         // Test that SelfRoleChangeException uses the correct code and message
         SelfRoleChangeException exception = new SelfRoleChangeException();
         assertThat(exception.getExceptionCode(), is(ExceptionCode.SELF_ROLE_CHANGE));
-        assertThat(exception.getMessage(), is("Owner cannot change his own organization/application role"));
+        assertThat(exception.getMessage(), is("Organization should have at least one OWNER"));
     }
 }

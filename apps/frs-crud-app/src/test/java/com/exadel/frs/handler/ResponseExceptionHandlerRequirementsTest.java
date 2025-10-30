@@ -36,11 +36,11 @@ class ResponseExceptionHandlerRequirementsTest {
         // Then: Verify the response contains correct code and message
         ExceptionResponseDto responseBody = response.getBody();
         assertThat(responseBody, is(notNullValue()));
-        assertThat(responseBody.getCode(), is(ExceptionCode.ACCESS_DENIED.getCode()));
+        assertThat(responseBody.getCode(), is(ExceptionCode.APP_ACCESS_DENIED.getCode()));
         assertThat(responseBody.getMessage(), is("Access Denied. Application has read only access to model"));
         
         // Verify the exception code name (this test will fail when ACCESS_DENIED is renamed to APP_ACCESS_DENIED)
-        assertThat(exception.getExceptionCode().name(), is("ACCESS_DENIED"));
+        assertThat(exception.getExceptionCode().name(), is("APP_ACCESS_DENIED"));
     }
 
     @Test
@@ -51,13 +51,13 @@ class ResponseExceptionHandlerRequirementsTest {
         // When: Exception is handled
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(exception);
 
-        // Then: Verify the response contains UNDEFINED code and the actual exception message
+        // Then: Verify the response contains UNDEFINED code and the generic message
         ExceptionResponseDto responseBody = response.getBody();
         assertThat(responseBody, is(notNullValue()));
         assertThat(responseBody.getCode(), is(ExceptionCode.UNDEFINED.getCode()));
-        assertThat(responseBody.getMessage(), is("Test null pointer"));
+        assertThat(responseBody.getMessage(), is("Something went wrong, please try again"));
         
-        // Note: According to PR requirement, this should eventually show 
+        // Note: According to PR requirement, this should show 
         // "Something went wrong, please try again" instead of the actual exception message
     }
 
@@ -69,13 +69,13 @@ class ResponseExceptionHandlerRequirementsTest {
         // When: Exception is handled
         ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(exception);
 
-        // Then: Verify the response contains UNDEFINED code and null message
+        // Then: Verify the response contains UNDEFINED code and generic message
         ExceptionResponseDto responseBody = response.getBody();
         assertThat(responseBody, is(notNullValue()));
         assertThat(responseBody.getCode(), is(ExceptionCode.UNDEFINED.getCode()));
-        assertThat(responseBody.getMessage(), is(nullValue()));
+        assertThat(responseBody.getMessage(), is("Something went wrong, please try again"));
         
-        // Note: According to PR requirement, this should eventually show 
+        // Note: According to PR requirement, this should show 
         // "Something went wrong, please try again" instead of null
     }
 
@@ -91,14 +91,14 @@ class ResponseExceptionHandlerRequirementsTest {
         ExceptionResponseDto responseBody = response.getBody();
         assertThat(responseBody, is(notNullValue()));
         assertThat(responseBody.getCode(), is(ExceptionCode.SELF_ROLE_CHANGE.getCode()));
-        assertThat(responseBody.getMessage(), is("Owner cannot change his own organization/application role"));
+        assertThat(responseBody.getMessage(), is("Organization should have at least one OWNER"));
     }
 
     @Test
     void testExceptionCodeValues() {
         // Verify current exception code values (these tests will fail when codes are updated)
-        assertThat(ExceptionCode.ACCESS_DENIED.getCode(), is(1));
-        assertThat(ExceptionCode.ACCESS_DENIED.name(), is("ACCESS_DENIED"));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.getCode(), is(1));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.name(), is("APP_ACCESS_DENIED"));
         
         assertThat(ExceptionCode.UNDEFINED.getCode(), is(0));
         assertThat(ExceptionCode.UNDEFINED.name(), is("UNDEFINED"));
