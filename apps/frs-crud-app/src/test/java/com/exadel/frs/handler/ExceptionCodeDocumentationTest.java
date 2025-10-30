@@ -17,14 +17,14 @@ class ExceptionCodeDocumentationTest {
     void documentCurrentVsExpectedBehavior() {
         // Requirement 1: ACCESS_DENIED should be renamed to APP_ACCESS_DENIED
         System.out.println("=== REQUIREMENT 1: ACCESS_DENIED Renaming ===");
-        System.out.println("Current: ExceptionCode.ACCESS_DENIED.name() = " + ExceptionCode.ACCESS_DENIED.name());
+        System.out.println("Current: ExceptionCode.APP_ACCESS_DENIED.name() = " + ExceptionCode.APP_ACCESS_DENIED.name());
         System.out.println("Expected: ExceptionCode.APP_ACCESS_DENIED should exist");
-        System.out.println("Current code: " + ExceptionCode.ACCESS_DENIED.getCode());
+        System.out.println("Current code: " + ExceptionCode.APP_ACCESS_DENIED.getCode());
         System.out.println("Expected code: 1 (should remain the same)");
         
         // Requirement 2: UNDEFINED exception should show generic message
         System.out.println("\n=== REQUIREMENT 2: UNDEFINED Exception Message ===");
-        System.out.println("Current: Shows actual exception message (or null)");
+        System.out.println("Current: Shows 'Something went wrong, please try again'");
         System.out.println("Expected: Should show 'Something went wrong, please try again'");
         System.out.println("Current code: " + ExceptionCode.UNDEFINED.getCode());
         System.out.println("Expected code: 0 (should remain the same)");
@@ -38,15 +38,15 @@ class ExceptionCodeDocumentationTest {
         System.out.println("Expected code: 14 (should remain the same)");
         
         // Verify current state (these assertions should remain true until changes are made)
-        assertThat(ExceptionCode.ACCESS_DENIED.name(), is("ACCESS_DENIED"));
-        assertThat(ExceptionCode.ACCESS_DENIED.getCode(), is(1));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.name(), is("APP_ACCESS_DENIED"));
+        assertThat(ExceptionCode.APP_ACCESS_DENIED.getCode(), is(1));
         
         assertThat(ExceptionCode.UNDEFINED.name(), is("UNDEFINED"));
         assertThat(ExceptionCode.UNDEFINED.getCode(), is(0));
         
         assertThat(ExceptionCode.SELF_ROLE_CHANGE.name(), is("SELF_ROLE_CHANGE"));
         assertThat(ExceptionCode.SELF_ROLE_CHANGE.getCode(), is(14));
-        assertThat(currentException.getMessage(), is("Owner cannot change his own organization/application role"));
+        assertThat(currentException.getMessage(), is("Organization should have at least one OWNER"));
     }
     
     @Test
