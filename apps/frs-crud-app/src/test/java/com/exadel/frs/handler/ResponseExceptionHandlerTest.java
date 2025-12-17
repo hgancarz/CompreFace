@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.ResponseEntity;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.stream.Stream;
 
@@ -57,4 +58,19 @@ class ResponseExceptionHandlerTest {
     private static Stream<Arguments> undefinedExceptions() {
         return Stream.of(Arguments.of(new NullPointerException()));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.MethodSource("undefinedExceptionsWithNullMessage")
+    void handleUndefinedExceptionsWithNullMessage(final Exception ex) {
+        ResponseEntity<ExceptionResponseDto> response = exceptionHandler.handleUndefinedExceptions(ex);
+        ExceptionResponseDto body = response.getBody();
+        org.junit.jupiter.api.Assertions.assertEquals(ExceptionCode.UNDEFINED.getCode(), body.getCode());
+        String msg = body.getMessage();
+        org.junit.jupiter.api.Assertions.assertTrue(msg == null || "Something went wrong, please try again".equals(msg));
+    }
+
+    private static java.util.stream.Stream<org.junit.jupiter.params.provider.Arguments> undefinedExceptionsWithNullMessage() {
+        return java.util.stream.Stream.of(org.junit.jupiter.params.provider.Arguments.of(new NullPointerException()));
+    }
+
 }
